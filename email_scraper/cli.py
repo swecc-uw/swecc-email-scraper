@@ -26,7 +26,7 @@ def main() -> None:
 
 
 @main.command()
-@click.argument("mbox_path", type=click.Path(exists=True, path_type=Path))
+@click.argument("mbox_path", type=click.Path(exists=True, path_type=str))
 @click.option(
     "--processors",
     "-p",
@@ -43,8 +43,8 @@ def main() -> None:
     type=click.Choice(list(FORMATTERS.keys())),
     help="Output format",
 )
-@click.option("--output", "-o", type=click.Path(path_type=Path), help="Path to save the output")
-def process(mbox_path: Path, processors: list[str], format_name: str, output: Path | None) -> None:
+@click.option("--output", "-o", type=click.Path(path_type=str), help="Path to save the output")
+def process(mbox_path: str, processors: list[str], format_name: str, output: str | None) -> None:
     """Process an mbox file using selected processors.
 
     MBOX_PATH: Path to the mbox file to process
@@ -56,7 +56,7 @@ def process(mbox_path: Path, processors: list[str], format_name: str, output: Pa
         # Process the emails
         with Progress() as progress:
             task = progress.add_task("Processing emails...", total=100)
-            results = pipeline.process(mbox_path)
+            results = pipeline.process(Path(mbox_path))
             progress.update(task, completed=100)
 
         # Format and output results
@@ -64,7 +64,7 @@ def process(mbox_path: Path, processors: list[str], format_name: str, output: Pa
         formatted = formatter.format(results)
 
         if output:
-            formatter.save(results, output)
+            formatter.save(results, Path(output))
             console.print(f"[green]Results saved to {output}[/green]")
         else:
             console.print(formatted)
