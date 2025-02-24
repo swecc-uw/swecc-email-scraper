@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "swecc-email-scraper"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Python CLI tool for analyzing email data in mbox format"
 readme = "README.md"
 requires-python = ">=3.10"
