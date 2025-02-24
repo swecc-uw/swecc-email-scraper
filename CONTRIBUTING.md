@@ -89,7 +89,7 @@ git push -u origin feature-name
 
 ## Code Style Guidelines
 
-We use several tools to maintain code quality:
+We use a few tools to maintain code quality:
 
 - **Black**: For code formatting
 - **Ruff**: For linting and import sorting
@@ -159,7 +159,30 @@ class MyCustomProcessor(EmailProcessor):
 PROCESSORS[MyCustomProcessor.name] = MyCustomProcessor
 ```
 
-2. Add tests in `tests/test_processors.py`
+2. Add a new command in `email_scraper/cli.py`:
+
+```python
+@main.command()
+@click.option("--option", help="Custom option for my processor")
+def my_processor() -> None:
+    """Process emails using my custom processor.
+
+    Reads JSON email data from stdin and outputs results as JSON to stdout.
+    """
+    try:
+        data = json.load(sys.stdin)
+        emails = [EmailData(**e) for e in data]
+
+        processor = MyCustomProcessor()
+        results = processor.process(emails)
+
+        json.dump(results, sys.stdout)
+    except Exception as e:
+        console.print(f"[red]Error in my processor: {e}[/red]")
+        raise click.Abort() from e
+```
+
+3. Add tests in `tests/test_processors.py`
 
 ### Adding a New Formatter
 
@@ -203,9 +226,14 @@ import pytest
 from email_scraper.processors import MyCustomProcessor
 
 def test_my_processor():
-    processor = MyCustomProcessor()
-    result = processor.process([...])
-    assert result["key"] == expected_value
+    """Test the processor with sample data."""
+    # Create sample data
+    sample_data = [...]
+
+    # Test processing through CLI pipe
+    result = run_cli_command("echo '[...]' | email-scraper my-processor")
+    assert result.exit_code == 0
+    assert json.loads(result.stdout)["key"] == expected_value
 ```
 
 2. Use fixtures for common test data:
@@ -217,50 +245,40 @@ def sample_emails():
     ...
 ```
 
-3. Write clear and focused tests that verify specific functionality
+3. Write tests that verify the Unix pipeline functionality:
+```python
+def test_pipeline_flow():
+    """Test full pipeline from read through processing to format."""
+    result = run_cli_command(
+        "email-scraper read sample.mbox | "
+        "email-scraper my-processor | "
+        "email-scraper format -f json"
+    )
+    assert result.exit_code == 0
+```
 
 ## Documentation Guidelines
 
 1. Update docstrings for all new code
-2. Update README.md for user-facing changes
+2. Update README.md with examples of new commands
 3. Update CONTRIBUTING.md for development-related changes
-4. Add examples for new features
+4. Add examples showing how to use new processors in pipelines
+
+## Best Practices
+
+1. Follow Unix philosophy: each command should do one thing well
+2. Make commands composable using standard input/output
+3. Use JSON as the intermediate format for data exchange
 
 ## Release Process
 
 1. Update version in `pyproject.toml`
-2. Update CHANGELOG.md
-3. Create a new release on GitHub
-4. CI/CD will automatically publish to PyPI
+2. CI/CD will automatically publish to PyPI
 
-## Best Practices
-
-1. Keep processors focused on a single responsibility
-2. Use type hints consistently
-3. Write comprehensive tests
-4. Document your code thoroughly
-5. Follow the existing code style
-6. Keep the code modular and maintainable
-
-## Getting Help
-
-- Create an issue for bugs or feature requests
-- Join our discussions for questions
-- Read our documentation
-
-Thank you for contributing to SWECC Email Scraper!
 
 ## Pull Request Process
 
-1. Update the README.md with details of significant changes
+1. Update the README.md with examples of new commands
 2. Update the version number in `pyproject.toml` following [semantic versioning](https://semver.org/)
 3. Create a pull request with a clear description of the changes
 4. Ensure all CI checks pass
-
-## Code of Conduct
-
-Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
-
-## Questions?
-
-Feel free to open an issue for any questions or concerns.

@@ -1,13 +1,13 @@
 # SWECC Email Scraper
 
-A Python CLI tool for analyzing email data in mbox format. This tool helps you extract insights and perform analysis on email archives.
+A Python CLI tool for analyzing email data in mbox format.
 
 ## Features
 
 - 📧 Process mbox format email archives
+- 🔧 Unix-style pipeline architecture for flexible processing
 - 📊 Extendable framework for building analysis pipelines
-- 🎨 Rich command-line interface with progress reporting
-- Coming soon: Actual analysis...
+- Coming soon: More analysis processors...
 
 ## Installation
 
@@ -20,8 +20,8 @@ pip install swecc-email-scraper
 ### From Source
 
 ```bash
-git clone https://github.com/swecc/email-scraper.git
-cd email-scraper
+git clone https://github.com/swecc-uw/swecc-email-scraper.git
+cd swecc-email-scraper
 pip install -e ".[dev]"  # Install with development dependencies
 
 # Run tests
@@ -30,42 +30,77 @@ pytest
 
 ## Quick Start
 
-1. Basic usage with default statistics processor:
+The tool uses Unix pipes to compose commands. Each command does one thing and can be combined with others:
+
+1. Basic usage - get email stats with example processor:
 ```bash
-swecc-email-scraper process path/to/mailbox.mbox
+swecc-email-scraper read mailbox.mbox \
+  | swecc-email-scraper stats \
+  | swecc-email-scraper format -f json > results.json
 ```
 
-2. Use multiple processors and specify output format:
-```bash
-swecc-email-scraper process path/to/mailbox.mbox -p statistics -p headers -f json -o results.json
-```
-
-3. List available processors:
+2. List available processors:
 ```bash
 swecc-email-scraper list-processors
 ```
 
-4. List available output formats:
+3. List available output formats:
 ```bash
 swecc-email-scraper list-formats
 ```
 
+## Command Reference
 
-## Basic Example Usage
-
-1. Basic email statistics:
+### Read Command
+Reads an mbox file and outputs email data as JSON:
 ```bash
-swecc-email-scraper process inbox.mbox
+swecc-email-scraper read input.mbox > emails.json
 ```
 
-2. Export analysis to a file:
+### Stats Command
+Processes email data from stdin and outputs statistics:
 ```bash
-swecc-email-scraper process inbox.mbox -o analysis.json
+cat emails.json | swecc-email-scraper stats > stats.json
 ```
 
-3. Use multiple processors:
+### Format Command
+Formats JSON data using the specified formatter:
 ```bash
-swecc-email-scraper process inbox.mbox -p statistics -p <processor_name>
+cat stats.json \
+  | swecc-email-scraper format -f json \
+  > formatted.json
+```
+
+## Pipeline Examples
+
+1. Basic email statistics to terminal:
+```bash
+swecc-email-scraper read inbox.mbox \
+  | swecc-email-scraper stats \
+  | swecc-email-scraper format
+```
+
+2. Save analysis to a file:
+```bash
+swecc-email-scraper read inbox.mbox \
+  | swecc-email-scraper stats \
+  > analysis.json
+```
+
+3. Process with custom formatting:
+```bash
+swecc-email-scraper read inbox.mbox \
+  | swecc-email-scraper stats \
+  | swecc-email-scraper format -f json \
+  > analysis.json
+```
+
+4. Use with Unix tools:
+```bash
+# Filter emails before analysis
+swecc-email-scraper read inbox.mbox \
+  | jq 'map(select(.sender | contains("important")))' \
+  | swecc-email-scraper stats
 ```
 
 ## Extending the Tool
@@ -79,13 +114,12 @@ The tool is designed to be easily extensible. See [CONTRIBUTING.md](CONTRIBUTING
 
 ## Architecture
 
-The tool uses a pipeline architecture where:
+The tool uses a Unix pipeline architecture where:
 
-1. `EmailData` objects represent individual emails with parsed metadata
-2. `Pipeline` manages the flow of data through processors
-3. `EmailProcessor`s transform or analyze the data
-4. `OutputFormatter`s convert results to different formats
-
+1. `read` command converts mbox files to JSON email data
+2. Processor commands (like `stats`) transform or analyze the data
+3. `format` command handles output formatting
+4. Standard Unix pipes (`|`) connect the components
 
 ## License
 

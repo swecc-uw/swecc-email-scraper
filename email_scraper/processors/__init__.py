@@ -17,7 +17,7 @@ class EmailData:
     date: str
     content: str
     headers: Dict[str, str]
-    raw_message: Message
+    raw_message: Message | None = None
 
     @property
     def parsed_date(self) -> Optional[datetime]:
@@ -120,6 +120,18 @@ class Pipeline:
             results[processor.name] = processor.process(emails)
 
         return results
+
+    def load_emails(self, mbox_path: Path) -> List[EmailData]:
+        """Load emails from an mbox file.
+
+        Args:
+            mbox_path: Path to the mbox file to load
+
+        Returns:
+            List of EmailData objects
+        """
+        mbox = mailbox.mbox(str(mbox_path))
+        return [EmailData.from_message(msg) for msg in mbox]
 
 
 PROCESSORS: Dict[str, Type[EmailProcessor]] = {}
