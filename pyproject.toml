@@ -1,0 +1,133 @@
+[build-system]
+requires = ["hatchling>=1.21.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "swecc-email-scraper"
+version = "0.1.0"
+description = "A Python CLI tool for analyzing email data in mbox format"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+keywords = ["email", "mbox", "analysis", "cli"]
+authors = [
+    { name = "SWECC Labs", email = "swecc@uw.edu" }
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "click",  # CLI framework
+    "rich",   # Console output and progress bars
+]
+
+[project.optional-dependencies]
+dev = [
+    # Testing
+    "pytest",
+    "pytest-asyncio",
+
+    # Linting and Type Checking
+    "mypy",
+    "ruff",
+    "black",
+    "types-click",      # type stubs for click
+    "types-PyYAML",     # type stubs for PyYAML (used by mkdocs)
+    "types-Markdown",   # type stubs for markdown
+    "types-requests",   # type stubs for requests
+
+    # Development Tools
+    "pre-commit",
+    "build",
+    "twine",
+
+    # Documentation
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings[python]",
+]
+
+lint = [
+    "pre-commit",
+    "ruff",
+    "black",
+    "mypy",
+    "types-click",      # Type stubs for click
+    "types-PyYAML",     # Type stubs for PyYAML
+    "types-Markdown",   # Type stubs for markdown
+    "types-requests",   # Type stubs for requests
+]
+
+test = [
+    "pytest",
+    "pytest-asyncio",
+]
+
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings[python]",
+]
+
+[project.scripts]
+swecc-email-scraper = "email_scraper.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/swecc/email-scraper"
+Documentation = "https://github.com/swecc/email-scraper#readme"
+Issues = "https://github.com/swecc/email-scraper/issues"
+
+[tool.ruff]
+lint.select = ["E", "F", "I", "N", "W", "B", "UP", "PL", "RUF"]
+lint.ignore = []
+line-length = 100
+target-version = "py38"
+fix = true
+unsafe-fixes = false
+
+[tool.ruff.lint.isort]
+known-first-party = ["email_scraper"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+ignore_missing_imports = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_optional = true
+show_error_codes = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::UserWarning",
+]
+
+[tool.hatch.build]
+exclude = [
+    "tests/*",
+    "venv/*",
+    ".git/*",
+    "docs/*",
+    "*.pyc",
+    "__pycache__/*",
+    ".pytest_cache/*",
+    ".mypy_cache/*",
+    ".ruff_cache/*",
+    "dist/*",
+    "build/*",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["email_scraper"]
