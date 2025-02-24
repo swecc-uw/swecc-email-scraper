@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List, Union
 
 import click
 from rich.console import Console
@@ -89,6 +90,17 @@ def list_formats() -> None:
 
     for name, formatter_cls in FORMATTERS.items():
         console.print(f"[green]{name}[/green]: {formatter_cls.description}")
+
+
+def process_mbox(
+    mbox_path: Union[str, Path],
+    processors: List[str],
+    output_format: str = "text",
+) -> None:
+    """Process an mbox file with the specified processors."""
+    path = Path(mbox_path) if isinstance(mbox_path, str) else mbox_path
+    if not path.exists():
+        raise click.BadParameter(f"Mbox file not found: {mbox_path}")
 
 
 if __name__ == "__main__":
