@@ -9,6 +9,39 @@ on:
     types: [created]
 
 jobs:
+  pr-check:
+    name: Dry Run
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+
+    - name: Check code formatting
+      run: |
+        black --check email_scraper
+
+    - name: Lint with ruff
+      run: |
+        ruff check email_scraper
+
+    - name: Type check with mypy
+      run: |
+        mypy email_scraper
+
+    - name: Run basic tests
+      run: |
+        pytest -xvs
+
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -42,6 +75,7 @@ jobs:
   deploy:
     needs: test
     runs-on: ubuntu-latest
+    if: github.event_name == 'release'
 
     steps:
     - uses: actions/checkout@v4
