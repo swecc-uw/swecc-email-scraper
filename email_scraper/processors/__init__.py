@@ -52,7 +52,9 @@ class EmailData:
 
         if isinstance(content, list):
             # handle multipart messages by concatenating text parts
-            parts = [part.get_payload() for part in content if isinstance(part, Message)]
+            parts = [
+                part.get_payload() for part in content if isinstance(part, Message)
+            ]
             text_content = "\n".join(str(part) for part in parts)
         elif isinstance(content, bytes):
             text_content = content.decode("utf-8")
