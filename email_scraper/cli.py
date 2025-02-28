@@ -7,6 +7,7 @@ from rich.console import Console
 
 from . import __version__
 from .formatters import FORMATTERS
+from .formatters.csv import CsvFormatter
 from .formatters.json import JsonFormatter
 from .processors import PROCESSORS, EmailData, Pipeline
 from .processors.example import ExampleProcessor
@@ -14,6 +15,7 @@ from .processors.example import ExampleProcessor
 # register built-in processors and formatters
 PROCESSORS["statistics"] = ExampleProcessor
 FORMATTERS["json"] = JsonFormatter
+FORMATTERS["csv"] = CsvFormatter
 
 console = Console(stderr=True)  # use stderr for status messages
 
@@ -97,17 +99,26 @@ def stats() -> None:
     default="json",
     help="Output format",
 )
-def format(format_name: str) -> None:
+@click.option(
+    "-u",
+    "--unchecked",
+    type=bool,
+    required=False,
+    is_flag=True,
+    help="Check for unnested data for CSV",
+)
+def format(format_name: str, unchecked: bool) -> None:
     """Format JSON data from stdin using the specified formatter.
 
     Reads JSON data from stdin and formats it according to the specified format.
     """
     try:
         data = json.load(sys.stdin)
-
         formatter = FORMATTERS[format_name]()
-        formatted = formatter.format(data)
-
+        if(format_name=="json"):
+            formatted = formatter.format(data)
+        elif(format_name=="csv"):
+            formatted = formatter.format(data,unchecked)
         print(formatted)
     except Exception as e:
         console.print(f"[red]Error formatting data: {e}[/red]")
