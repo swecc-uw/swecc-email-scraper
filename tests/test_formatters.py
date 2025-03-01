@@ -3,7 +3,7 @@ import json
 import pytest
 
 from email_scraper.formatters.json import JsonFormatter
-
+from email_scraper.formatters.csv import CsvFormatter
 
 @pytest.fixture
 def sample_results():
@@ -20,7 +20,6 @@ def sample_results():
             "top_subjects": {"Test Subject 1": 1, "Test Subject 2": 1},
         }
     }
-
 
 def test_json_formatter(sample_results):
     """test json formatter output."""
@@ -42,3 +41,11 @@ def test_json_formatter_save(sample_results, tmp_path):
     with open(output_path) as f:
         saved_data = json.load(f)
     assert saved_data == sample_results
+
+def test_csv_formatter(sample_results):
+    """test csv formatter output."""
+    formatter = CsvFormatter()
+    output = formatter.format(sample_results)
+
+    parsed = json.loads(output)
+    assert parsed == sample_results
