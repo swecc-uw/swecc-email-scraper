@@ -3,7 +3,7 @@ import json
 import pytest
 
 from email_scraper.formatters.json import JsonFormatter
-
+from email_scraper.formatters.csv import CsvFormatter
 
 @pytest.fixture
 def sample_results():
@@ -20,7 +20,6 @@ def sample_results():
             "top_subjects": {"Test Subject 1": 1, "Test Subject 2": 1},
         }
     }
-
 
 def test_json_formatter(sample_results):
     """test json formatter output."""
