@@ -15,7 +15,7 @@ class OutputFormatter(ABC):
     file_extension: str  # default file extension for this format
 
     @abstractmethod
-    def format(self, results: Dict[str, Any]) -> str:
+    def format(self, results: Dict[str, Any], is_unchecked: bool = False) -> str:
         """Format processing results as a string.
 
         Args:

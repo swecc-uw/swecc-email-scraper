@@ -115,10 +115,10 @@ def format(format_name: str, unchecked: bool) -> None:
     try:
         data = json.load(sys.stdin)
         formatter = FORMATTERS[format_name]()
-        if(format_name=="json"):
+        if format_name == "json":
             formatted = formatter.format(data)
-        elif(format_name=="csv"):
-            formatted = formatter.format(data,unchecked)
+        elif format_name == "csv":
+            formatted = formatter.format(data, unchecked)
         print(formatted)
     except Exception as e:
         console.print(f"[red]Error formatting data: {e}[/red]")
