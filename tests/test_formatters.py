@@ -1,3 +1,5 @@
+import csv
+import io
 import json
 
 import pytest
@@ -41,3 +43,14 @@ def test_json_formatter_save(sample_results, tmp_path):
     with open(output_path) as f:
         saved_data = json.load(f)
     assert saved_data == sample_results
+
+def test_csv_formatter_unchecked(sample_results):
+    """test csv formatter(uncheked) output."""
+    formatter = CsvFormatter()
+    parsed = formatter.format(sample_results,True)
+    col = [k for k in sample_results.keys()]
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=col)
+    writer.writeheader()
+    writer.writerow(sample_results)
+    assert parsed == output.getvalue()

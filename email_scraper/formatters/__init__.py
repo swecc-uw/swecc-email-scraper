@@ -25,7 +25,7 @@ class OutputFormatter(ABC):
             Formatted string representation
         """
         pass
-    
+
     @abstractmethod
     def format(self, results: Dict[str, Any], is_unchecked: bool = False) -> str:
         """Format processing results as a string.
