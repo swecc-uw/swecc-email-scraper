@@ -30,32 +30,23 @@ class CsvFormatter(OutputFormatter):
         output = io.StringIO()
         writer = csv.DictWriter(output, fieldnames=col)
 
-        if is_unchecked:
-
-            # Write header and rows
-            writer.writeheader()
-            writer.writerow(results)
-            return output.getvalue()
-
-        else:
+        if not is_unchecked:
             try:
                 rows = [
                     j
                     for j in results.values()
-                    if type(j) is not int and type(j) is not int
+                    if type(j) is not int and type(j) is not str
                 ]
-                print(rows)
                 for row in rows:
                     if len(row) > 1:
-                        print(len(row))
-                        raise Exception
-
-                # Write header and rows
-                writer.writeheader()
-                writer.writerow(results)
-                return output.getvalue()
+                        raise ValueError(
+                            f"\nsssThe value is imcompatible for csv file -> {row}"
+                        )
             except Exception as e:
                 console.print(
-                    f"[red]Data is nested try with -u or --unchecked flag :{e}[/red]"
+                    f"[red]Data is nested try with -u or --unchecked flag {e}[/red]"
                 )
                 raise click.Abort() from e
+        writer.writeheader()
+        writer.writerow(results)
+        return output.getvalue()

@@ -1,0 +1,55 @@
+From sender1@example.com Mon Feb 19 10:00:00 2024
+Subject: Meeting Reminder
+From: Alice Johnson <sender1@example.com>
+To: Bob Smith <recipient@example.com>
+Date: Mon, 19 Feb 2024 10:00:00 -0500
+Message-ID: <msg1@example.com>
+
+Hi Bob,
+
+Just a reminder about the meeting scheduled for tomorrow at 10 AM.
+
+Best,
+Alice
+
+From sender2@example.com Tue Feb 20 14:30:00 2024
+Subject: Project Update
+From: Charlie Brown <sender2@example.com>
+To: Team <team@example.com>
+Date: Tue, 20 Feb 2024 14:30:00 -0500
+Message-ID: <msg2@example.com>
+
+Hello Team,
+
+The project is on track for the March deadline. Let me know if you need any resources.
+
+Thanks,
+Charlie
+
+From sender3@example.com Wed Feb 21 08:45:00 2024
+Subject: Lunch Invitation
+From: Dana White <sender3@example.com>
+To: Emily Stone <emily@example.com>
+Date: Wed, 21 Feb 2024 08:45:00 -0500
+Message-ID: <msg3@example.com>
+
+Hey Emily,
+
+Would you like to grab lunch this Friday?
+
+Cheers,
+Dana
+
+From sender1@example.com Mon Feb 19 10:00:00 2024
+Subject: Meeting Reminder
+From: Alice Johnson <sender1@example.com>
+To: Bob Smith <recipient@example.com>
+Date: Mon, 19 Feb 2024 10:00:00 -0500
+Message-ID: <msg1@example.com>
+
+Hi Bob,
+
+Just a reminder about the meeting scheduled for tomorrow at 10 AM.
+
+Best,
+Alice
