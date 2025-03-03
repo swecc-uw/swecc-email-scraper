@@ -26,7 +26,7 @@ class CsvFormatter(OutputFormatter):
         Returns:
             CSV-formatted string
         """
-        col = [k for k in results.keys()]
+        col = list(results.keys())
         output = io.StringIO()
         writer = csv.DictWriter(output, fieldnames=col)
 
