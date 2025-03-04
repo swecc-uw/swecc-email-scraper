@@ -9,6 +9,7 @@ from . import __version__
 from .formatters import FORMATTERS
 from .formatters.csv import CsvFormatter
 from .formatters.json import JsonFormatter
+from .formatters.yaml import YamlFormatter
 from .processors import PROCESSORS, EmailData, Pipeline
 from .processors.example import ExampleProcessor
 
@@ -16,6 +17,8 @@ from .processors.example import ExampleProcessor
 PROCESSORS["statistics"] = ExampleProcessor
 FORMATTERS["json"] = JsonFormatter
 FORMATTERS["csv"] = CsvFormatter
+FORMATTERS["yaml"] = YamlFormatter
+
 
 console = Console(stderr=True)  # use stderr for status messages
 
