@@ -46,12 +46,19 @@ swecc-email-scraper read mailbox.mbox \
   | swecc-email-scraper format -f csv > results.csv
 ```
 
-3. List available processors:
+3. Basic Yaml usage - get email stats with example processor:
+```bash
+swecc-email-scraper read mailbox.mbox \
+  | swecc-email-scraper stats \
+  | swecc-email-scraper format -f yaml > results.yaml
+```
+
+4. List available processors:
 ```bash
 swecc-email-scraper list-processors
 ```
 
-4. List available output formats:
+5. List available output formats:
 ```bash
 swecc-email-scraper list-formats
 ```
@@ -91,6 +98,12 @@ cat stats.json \
   | swecc-email-scraper format -f csv -u \
   > formatted.csv
 ```
+4. Formats YAML data using the yaml formatter:
+```bash
+cat stats.json \
+  | swecc-email-scraper format -f yaml \
+  > formatted.yaml
+```
 
 ## Pipeline Examples
 
@@ -124,7 +137,15 @@ swecc-email-scraper read inbox.mbox \
   > analysis.csv
 ```
 
-5. Use with Unix tools:
+5. Process with json formatting:
+```bash
+swecc-email-scraper read inbox.mbox \
+  | swecc-email-scraper stats \
+  | swecc-email-scraper format -f yaml \
+  > analysis.yaml
+```
+
+6. Use with Unix tools:
 ```bash
 # Filter emails before analysis
 swecc-email-scraper read inbox.mbox \
