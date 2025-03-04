@@ -11,7 +11,7 @@ class JsonFormatter(OutputFormatter):
     description = "Format results as JSON"
     file_extension = "json"
 
-    def format(self, results: Dict[str, Any], is_unchecked: bool = False) -> str:
+    def format(self, results: Dict[str, Any], **kwargs) -> str:
         """Format results as a JSON string.
 
         Args:
