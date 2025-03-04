@@ -17,7 +17,7 @@ class CsvFormatter(OutputFormatter):
     description = "Format results as CSV"
     file_extension = "csv"
 
-    def format(self, results: Dict[str, Any],**kwargs) -> str:
+    def format(self, results: Dict[str, Any], **kwargs:bool) -> str:
         """Format results as a CSV string.
 
         Args:
@@ -26,7 +26,7 @@ class CsvFormatter(OutputFormatter):
         Returns:
             CSV-formatted string
         """
-        is_unchecked = kwargs.get('unchecked')
+        is_unchecked = kwargs.get("unchecked")
         col = list(results.keys())
         output = io.StringIO()
         writer = csv.DictWriter(output, fieldnames=col)
