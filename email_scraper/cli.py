@@ -1,6 +1,7 @@
 import json
 import sys
 from pathlib import Path
+from typing import Any, Dict
 
 import click
 from rich.console import Console
@@ -115,7 +116,9 @@ def format(format_name: str, unchecked: bool) -> None:
     try:
         data = json.load(sys.stdin)
         formatter = FORMATTERS[format_name]()
-        formatted = formatter.format(data, unchecked=unchecked)
+        kwargs: Dict[str, Any] = {}
+        kwargs["unchecked"] = unchecked
+        formatted = formatter.format(data, **kwargs)
         print(formatted)
     except Exception as e:
         console.print(f"[red]Error formatting data: {e}[/red]")

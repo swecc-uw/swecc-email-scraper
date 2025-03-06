@@ -26,17 +26,12 @@ class CsvFormatter(OutputFormatter):
         Returns:
             CSV-formatted string
         """
-        
-        try:
-            if (isinstance(kwargs.get("unchecked"),bool)): #Checks for boolean value
-                is_unchecked = kwargs.get("unchecked")
-            else:
-                raise TypeError(
-                    f"[red] 'unchecked': not a boolean check -u flag [/red]"
-                )
-        except Exception as e:
-            raise click.Abort() from e
-        
+        is_unchecked = kwargs.get("unchecked", False)
+        if not isinstance(is_unchecked, bool):
+            raise click.Abort(
+                "[red] 'unchecked': not a boolean. Check the -u flag. [/red]"
+            )
+
         col = list(results.keys())
         output = io.StringIO()
         writer = csv.DictWriter(output, fieldnames=col)
