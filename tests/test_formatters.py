@@ -1,6 +1,7 @@
 import csv
 import io
 import json
+import yaml
 from typing import Any
 
 import click
@@ -8,6 +9,7 @@ import pytest
 
 from email_scraper.formatters.json import JsonFormatter
 from email_scraper.formatters.csv import CsvFormatter
+from email_scraper.formatters.yaml import YamlFormatter
 
 @pytest.fixture
 def sample_results():
@@ -61,9 +63,11 @@ def test_csv_formatter_unchecked(sample_results):
     parsed = formatter.format(sample_results,unchecked = True)
     col = list(sample_results.keys())
     output = io.StringIO()
+   
     writer = csv.DictWriter(output, fieldnames=col) 
     writer.writeheader()
     writer.writerow(sample_results)
+    
     assert parsed == output.getvalue()
 
 def test_csv_formatter_checked_invalid(sample_results):
@@ -79,7 +83,17 @@ def test_csv_formatter_checked_valid(sample_results):
     parsed = formatter.format(flat_results,unchecked = True)
     col = list(flat_results.keys())
     output = io.StringIO()
+    
     writer = csv.DictWriter(output, fieldnames=col) 
     writer.writeheader()
     writer.writerow(flat_results)
+
     assert parsed == output.getvalue()
+
+def test_json_formatter(sample_results):
+    """test yaml formatter output."""
+    formatter = YamlFormatter()
+    output = formatter.format(sample_results)
+
+    parsed = yaml.dump(sample_results)
+    assert parsed == output
