@@ -15,7 +15,7 @@ class YamlFormatter(OutputFormatter):
     description = "Format results as YAML"
     file_extension = "yaml"
 
-    def format(self, results: Dict[str, Any], **kwargs: bool) -> str:
+    def format(self, results: Dict[str, Any], **kwargs: Dict[str, Any]) -> str:
         """Format results as a CSV string.
 
         Args:
