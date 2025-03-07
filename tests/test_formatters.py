@@ -90,7 +90,7 @@ def test_csv_formatter_checked_valid(sample_results):
 
     assert parsed == output.getvalue()
 
-def test_json_formatter(sample_results):
+def test_yaml_formatter(sample_results):
     """test yaml formatter output."""
     formatter = YamlFormatter()
     output = formatter.format(sample_results)
