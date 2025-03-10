@@ -39,7 +39,7 @@ swecc-email-scraper read mailbox.mbox \
   | swecc-email-scraper format -f json > results.json
 ```
 
-2. Basic Csv usage - get email stats with example processor:
+2. Basic CSV usage - get email stats with example processor:
 ```bash
 swecc-email-scraper read mailbox.mbox \
   | swecc-email-scraper stats \
@@ -85,20 +85,20 @@ cat stats.json \
   > formatted.json
 ```
 
-2. Formats CSV (Checks for nested data: throws error if found) using the csv formatter:
+2. Formats CSV (Checks for nested data: throws error if found) using the CSV formatter:
 ```bash
 cat stats.json \
   | swecc-email-scraper format -f csv \
   > formatted.csv
 ```
 
-3. Formats CSV (Unchecked: converts nested data into string) using the csv formatter:
+3. Formats CSV (Unchecked: converts nested data into string) using the CSV formatter:
 ```bash
 cat stats.json \
   | swecc-email-scraper format -f csv -u \
   > formatted.csv
 ```
-4. Formats YAML data using the yaml formatter:
+4. Formats YAML data using the YAML formatter:
 ```bash
 cat stats.json \
   | swecc-email-scraper format -f yaml \
