@@ -39,12 +39,26 @@ swecc-email-scraper read mailbox.mbox \
   | swecc-email-scraper format -f json > results.json
 ```
 
-2. List available processors:
+2. Basic Csv usage - get email stats with example processor:
+```bash
+swecc-email-scraper read mailbox.mbox \
+  | swecc-email-scraper stats \
+  | swecc-email-scraper format -f csv > results.csv
+```
+
+3. Basic Yaml usage - get email stats with example processor:
+```bash
+swecc-email-scraper read mailbox.mbox \
+  | swecc-email-scraper stats \
+  | swecc-email-scraper format -f yaml > results.yaml
+```
+
+4. List available processors:
 ```bash
 swecc-email-scraper list-processors
 ```
 
-3. List available output formats:
+5. List available output formats:
 ```bash
 swecc-email-scraper list-formats
 ```
@@ -64,11 +78,31 @@ cat emails.json | swecc-email-scraper stats > stats.json
 ```
 
 ### Format Command
-Formats JSON data using the specified formatter:
+1. Formats JSON data using the json formatter:
 ```bash
 cat stats.json \
   | swecc-email-scraper format -f json \
   > formatted.json
+```
+
+2. Formats CSV (Checks for nested data: throws error if found) using the csv formatter:
+```bash
+cat stats.json \
+  | swecc-email-scraper format -f csv \
+  > formatted.csv
+```
+
+3. Formats CSV (Unchecked: converts nested data into string) using the csv formatter:
+```bash
+cat stats.json \
+  | swecc-email-scraper format -f csv -u \
+  > formatted.csv
+```
+4. Formats YAML data using the yaml formatter:
+```bash
+cat stats.json \
+  | swecc-email-scraper format -f yaml \
+  > formatted.yaml
 ```
 
 ## Pipeline Examples
@@ -87,7 +121,7 @@ swecc-email-scraper read inbox.mbox \
   > analysis.json
 ```
 
-3. Process with custom formatting:
+3. Process with json formatting:
 ```bash
 swecc-email-scraper read inbox.mbox \
   | swecc-email-scraper stats \
@@ -95,7 +129,23 @@ swecc-email-scraper read inbox.mbox \
   > analysis.json
 ```
 
-4. Use with Unix tools:
+4. Process with json formatting:
+```bash
+swecc-email-scraper read inbox.mbox \
+  | swecc-email-scraper stats \
+  | swecc-email-scraper format -f csv \
+  > analysis.csv
+```
+
+5. Process with json formatting:
+```bash
+swecc-email-scraper read inbox.mbox \
+  | swecc-email-scraper stats \
+  | swecc-email-scraper format -f yaml \
+  > analysis.yaml
+```
+
+6. Use with Unix tools:
 ```bash
 # Filter emails before analysis
 swecc-email-scraper read inbox.mbox \
