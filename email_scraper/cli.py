@@ -54,8 +54,7 @@ def read(mbox_path: str) -> None:
             }
             for e in emails
         ]
-
-        json.dump(email_dicts, sys.stdout)
+        json.dump(email_dicts, sys.stdout, ensure_ascii=False)
     except Exception as e:
         console.print(f"[red]Error reading mbox: {e}[/red]")
         raise click.Abort() from e

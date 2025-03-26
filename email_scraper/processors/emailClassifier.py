@@ -9,12 +9,12 @@ class EmailClassifier(EmailProcessor):
     description = "Classifies emails into predefined categories based on keywords, with confidence scoring."
 
     CATEGORIES = {
-        "Application confirmation": ["thank you for applying", "application received", "we have received your application"],
+        "Application confirmation": ["thank you for applying", "application received", "we have received your application", "Thank you so much for taking the time to apply"],
         "OA invitation": ["online assessment", "coding test", "HackerRank", "CodeSignal", "assessment link"],
         "Interview request": ["interview", "schedule a call", "speak with you", "chat about your application"],
-        "Rejection": ["unfortunately", "we regret to inform you", "not moving forward", "consider other candidates"],
+        "Rejection": ["unfortunately", "we regret to inform you", "not moving forward", "consider other candidates", "decided not to move forward with your application"],
         "Offer": ["excited to offer", "we are pleased to offer", "congratulations", "job offer"],
-        "Other": []
+        "Other": [],
     }
 
     CONFIDENCE_THRESHOLD = 0.05 
@@ -23,38 +23,46 @@ class EmailClassifier(EmailProcessor):
         """Classify an email and return category, confidence score, and matched keywords."""
         scores = defaultdict(int)
         matched_keywords = []
-        content = f"{email.subject} {email.content}".lower()
 
-        for category, keywords in self.CATEGORIES.items():
-            for keyword in keywords:
-                if re.search(rf"\b{re.escape(keyword)}\b", content):
-                    scores[category] += 1
-                    matched_keywords.append(keyword)  
+        try:
+            content = f"{email.subject} {email.content}".lower()
 
-        if scores:
-            max_score = max(scores.values())
-            top_categories = [cat for cat, score in scores.items() if score == max_score]
+            # Debugprint output
+            # (content)            
+            for category, keywords in self.CATEGORIES.items():
+                for keyword in keywords:
+                    keyword = keyword.lower()
+                    pattern = rf"{re.escape(keyword)}"
+                    if re.search(pattern, content):
+                        scores[category] += 1
+                        matched_keywords.append(keyword)
             
-            if len(top_categories) == 1:
-                category = top_categories[0]
-                sorted_scores = sorted(scores.values(), reverse=True)
-                s1 = sorted_scores[0]
-                s2 = sorted_scores[1] if len(sorted_scores) > 1 else 0
-                confidence = abs(s1 - s2) / s1 if s1 else 0.0
-            else:
-                # Option 1: Send to human review
-                # category = "Human Review Needed"
-                # confidence = 0.0
+            if scores:
+                # Find the maximum score and corresponding categories
+                max_score = max(scores.values())
+                top_categories = [cat for cat, score in scores.items() if score == max_score]
                 
-                # Option 2: Use a priority-based tiebreaker
-                priorities = {"offer": 2, "interview request": 2,"thank you for applying":1}
-                category = max(top_categories, key=lambda x: priorities.get(x, 0))
-                confidence = 0.5  
-                                
+                if len(top_categories) == 1:
+                    category = top_categories[0]
+                    sorted_scores = sorted(scores.values(), reverse=True)
+                    s1 = sorted_scores[0]
+                    s2 = sorted_scores[1] if len(sorted_scores) > 1 else 0
+                    confidence = abs(s1 - s2) / s1 if s1 else 0.0
+                else:
+                    category = "Human Review Needed"
+                    confidence = 0.5
+            else:
+                category = "Other"
+                confidence = 1.0
+            
+        except Exception as e:
+            category = "Processing Error"
+            confidence = 0.0
+            matched_keywords = [f"Error: {str(e)}"]
             return category, confidence, matched_keywords
-        return "Other", 1.0, []
-
-
+        
+        return category, confidence, matched_keywords
+    
     def process(self, emails: List[EmailData]) -> Dict[str, Any]:
         """Process a list of emails and classify them with confidence scores and matched keywords."""
         results = {}
