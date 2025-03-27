@@ -126,19 +126,19 @@ def sample_classify_emails():
     well as one email for something that requires human review
     """
 
-    comfirmation_email = EmailMessage()
-    comfirmation_email.add_header("from", "recruiter@company.com")
-    comfirmation_email.add_header("to", "applicant@example.com")
-    comfirmation_email.add_header("subject", "Thank you for applying!")
-    comfirmation_email.add_header("date", format_datetime(datetime.now()))
-    comfirmation_email.set_content(
+    confirmation_email = EmailMessage()
+    confirmation_email.add_header("from", "recruiter@company.com")
+    confirmation_email.add_header("to", "applicant@example.com")
+    confirmation_email.add_header("subject", "Thank you for applying!")
+    confirmation_email.add_header("date", format_datetime(datetime.now()))
+    confirmation_email.set_content(
         "Please note that your application to company XYZ has been accepted."
     )
 
     oa_email = EmailMessage()
     oa_email.add_header("from", "recruiter@company.com")
     oa_email.add_header("to", "applicant@example.com")
-    oa_email.add_header("subject", "Online Assesment")
+    oa_email.add_header("subject", "Online Assessment")
     oa_email.add_header("date", format_datetime(datetime.now()))
     oa_email.set_content("Dear Applicant\n\n A HackerRank has been sent out to you.")
 
@@ -175,11 +175,11 @@ def sample_classify_emails():
     other_email.add_header("subject", "Job Offer at XYZ")
     other_email.add_header("date", format_datetime(datetime.now()))
     other_email.set_content(
-        "Dear Person\n\n After the previous interview, we were impressed but unfortunately we are unable to offer you a positon at company XYZ.  "
+        "Dear Person\n\n After the previous interview, we were impressed but unfortunately we are unable to offer you a position at company XYZ.  "
     )
 
     return [
-        EmailData.from_message(comfirmation_email),
+        EmailData.from_message(confirmation_email),
         EmailData.from_message(oa_email),
         EmailData.from_message(interview_email),
         EmailData.from_message(rejection_email),
