@@ -6,8 +6,9 @@ from email.utils import format_datetime
 import pytest
 
 from email_scraper.processors import EmailData, Pipeline
+from email_scraper.processors.classifier import EmailClassifier
 from email_scraper.processors.example import ExampleProcessor
-from email_scraper.processors.emailClassifier import EmailClassifier
+
 
 @pytest.fixture
 def sample_dates():
@@ -117,11 +118,11 @@ def test_email_data_creation(sample_dates):
     assert isinstance(email_data.parsed_date, datetime)
     assert email_data.parsed_date.replace(microsecond=0) == date1.replace(microsecond=0)
 
-    
+
 @pytest.fixture
 def sample_classify_emails():
     """
-    emails to test all 5 types of keywords one by one as 
+    emails to test all 5 types of keywords one by one as
     well as one email for something that requires human review
     """
 
@@ -130,7 +131,9 @@ def sample_classify_emails():
     comfirmation_email.add_header("to", "applicant@example.com")
     comfirmation_email.add_header("subject", "Thank you for applying!")
     comfirmation_email.add_header("date", format_datetime(datetime.now()))
-    comfirmation_email.set_content("Please note that your application to company XYZ has been accepted.")
+    comfirmation_email.set_content(
+        "Please note that your application to company XYZ has been accepted."
+    )
 
     oa_email = EmailMessage()
     oa_email.add_header("from", "recruiter@company.com")
@@ -144,70 +147,108 @@ def sample_classify_emails():
     interview_email.add_header("to", "applicant@example.com")
     interview_email.add_header("subject", "Your application to Intern Position")
     interview_email.add_header("date", format_datetime(datetime.now()))
-    interview_email.set_content("Dear Applicant\n\n Please reply with available times to schedule a call to discuss you experiences.")
+    interview_email.set_content(
+        "Dear Applicant\n\n Please reply with available times to schedule a call to discuss you experiences."
+    )
 
     rejection_email = EmailMessage()
     rejection_email.add_header("from", "recruiter@company.com")
     rejection_email.add_header("to", "applicant@example.com")
     rejection_email.add_header("subject", "Your application to Intern Position")
     rejection_email.add_header("date", format_datetime(datetime.now()))
-    rejection_email.set_content("Dear Applicant\n\n Unfortunately, we are unable to offer you a position.")
+    rejection_email.set_content(
+        "Dear Applicant\n\n Unfortunately, we are unable to offer you a position."
+    )
 
     offer_email = EmailMessage()
     offer_email.add_header("from", "recruiter@company.com")
     offer_email.add_header("to", "applicant@example.com")
     offer_email.add_header("subject", "Job Offer at XYZ")
     offer_email.add_header("date", format_datetime(datetime.now()))
-    offer_email.set_content("Dear Applicant\n\n Congratulations! We are able to offer a position for you! ")
+    offer_email.set_content(
+        "Dear Applicant\n\n Congratulations! We are able to offer a position for you! "
+    )
 
     other_email = EmailMessage()
     other_email.add_header("from", "recruiter@company.com")
     other_email.add_header("to", "applicant@example.com")
     other_email.add_header("subject", "Job Offer at XYZ")
     other_email.add_header("date", format_datetime(datetime.now()))
-    other_email.set_content("Dear Person\n\n After the previous interview, we were impressed but unfortunately we are unable to offer you a positon at company XYZ.  ")
+    other_email.set_content(
+        "Dear Person\n\n After the previous interview, we were impressed but unfortunately we are unable to offer you a positon at company XYZ.  "
+    )
 
-    return [EmailData.from_message(comfirmation_email), EmailData.from_message(oa_email),EmailData.from_message(interview_email),EmailData.from_message(rejection_email),EmailData.from_message(offer_email),EmailData.from_message(other_email),]
+    return [
+        EmailData.from_message(comfirmation_email),
+        EmailData.from_message(oa_email),
+        EmailData.from_message(interview_email),
+        EmailData.from_message(rejection_email),
+        EmailData.from_message(offer_email),
+        EmailData.from_message(other_email),
+    ]
 
 
 def test_classify_processor(sample_classify_emails):
     """Test the email classification processor."""
     processor = EmailClassifier()
     results = processor.process(sample_classify_emails)
-    
+
     assert "classifications" in results
     classifications = results["classifications"]
     assert len(classifications) == 6
-    
+
     # Test each email classification by index
     # Confirmation email
     assert classifications[0]["category"] == "Application confirmation"
-    assert any(kw in classifications[0]["matched_keywords"] for kw in ["thank you for applying", "application received", "we have received your application"])
+    assert any(
+        kw in classifications[0]["matched_keywords"]
+        for kw in [
+            "thank you for applying",
+            "application received",
+            "we have received your application",
+        ]
+    )
     assert classifications[0]["confidence"] > 0.5
-    
+
     # OA/Hackerrank email
     assert classifications[1]["category"] == "OA invitation"
     assert "hackerrank" in classifications[1]["matched_keywords"]
     assert classifications[1]["confidence"] > 0.5
-    
+
     # Interview email
     assert classifications[2]["category"] == "Interview request"
-    assert any(kw in classifications[2]["matched_keywords"] for kw in ["interview", "schedule a call", "speak with you", "chat about your application"])
+    assert any(
+        kw in classifications[2]["matched_keywords"]
+        for kw in [
+            "interview",
+            "schedule a call",
+            "speak with you",
+            "chat about your application",
+        ]
+    )
     assert classifications[2]["confidence"] > 0.5
-    
+
     # Rejection email
     assert classifications[3]["category"] == "Rejection"
     assert "unfortunately" in classifications[3]["matched_keywords"]
     assert classifications[3]["confidence"] > 0.5
-    
+
     # Offer email
     assert classifications[4]["category"] == "Offer"
     assert "congratulations" in classifications[4]["matched_keywords"]
     assert classifications[4]["confidence"] > 0.5
-    
+
     # Mixed signals email
     assert classifications[5]["category"] == "Human Review Needed"
     assert classifications[5]["confidence"] <= 0.5
     assert len(classifications[5]["matched_keywords"]) >= 2
     assert "unfortunately" in classifications[5]["matched_keywords"]
-    assert any(kw in classifications[5]["matched_keywords"] for kw in ["interview", "schedule a call", "speak with you", "chat about your application"])
+    assert any(
+        kw in classifications[5]["matched_keywords"]
+        for kw in [
+            "interview",
+            "schedule a call",
+            "speak with you",
+            "chat about your application",
+        ]
+    )
