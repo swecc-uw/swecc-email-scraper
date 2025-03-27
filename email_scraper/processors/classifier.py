@@ -1,6 +1,6 @@
 import re
 from collections import defaultdict
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, List, Tuple
 
 from . import EmailData, EmailProcessor
 
@@ -49,8 +49,10 @@ class EmailClassifier(EmailProcessor):
 
     def classify_email(self, email: EmailData) -> Dict[str, Any]:
         """Classify an email and return category, confidence score, and matched keywords."""
-        scores = defaultdict(int)
-        matched_keywords = []
+        scores: defaultdict[str, int] = defaultdict(int)
+        matched_keywords: List[str] = []
+        category: str = "Other"
+        confidence: float = 0.0
 
         try:
             content = f"{email.subject} {email.content}"
@@ -85,9 +87,12 @@ class EmailClassifier(EmailProcessor):
             category = "Processing Error"
             confidence = 0.0
             matched_keywords = [f"Error: {e!s}"]
-            return category, confidence, matched_keywords
 
-        return category, confidence, matched_keywords
+        return {
+            "category": category,
+            "confidence": confidence,
+            "matched_keywords": matched_keywords,
+        }
 
     def process(self, emails: List[EmailData]) -> Dict[str, Any]:
         """Process a list of emails and classify them with
@@ -95,14 +100,13 @@ class EmailClassifier(EmailProcessor):
         classifications = []
 
         for email in emails:
-            category, confidence, matched_keywords = self.classify_email(email)
-
+            classification = self.classify_email(email)
             classifications.append(
                 {
                     "subject": email.subject,
-                    "category": category,
-                    "confidence": confidence,
-                    "matched_keywords": matched_keywords,
+                    "category": classification["category"],
+                    "confidence": classification["confidence"],
+                    "matched_keywords": classification["matched_keywords"],
                 }
             )
 
