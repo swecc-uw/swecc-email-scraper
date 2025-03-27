@@ -138,7 +138,7 @@ def sample_classify_emails():
     oa_email = EmailMessage()
     oa_email.add_header("from", "recruiter@company.com")
     oa_email.add_header("to", "applicant@example.com")
-    oa_email.add_header("subject", "Online Assesment")
+    oa_email.add_header("subject", "Online Assessment")
     oa_email.add_header("date", format_datetime(datetime.now()))
     oa_email.set_content("Dear Applicant\n\n A HackerRank has been sent out to you.")
 
