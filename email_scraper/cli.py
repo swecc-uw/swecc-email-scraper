@@ -9,7 +9,7 @@ from . import __version__
 from .formatters import FORMATTERS
 from .formatters.json import JsonFormatter
 from .processors import PROCESSORS, EmailData, Pipeline
-from .processors.emailClassifier import EmailClassifier
+from .processors.classifier import EmailClassifier
 from .processors.example import ExampleProcessor
 
 # register built-in processors and formatters

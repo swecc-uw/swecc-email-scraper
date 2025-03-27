@@ -1,15 +1,15 @@
 import re
 from collections import defaultdict
-from typing import Any, Dict, List
+from typing import Any, ClassVar, Dict, List
 
 from . import EmailData, EmailProcessor
 
 
 class EmailClassifier(EmailProcessor):
     name = "classifier"
-    description = "Classifies emails into predefined categories based on keywords, with confidence scoring."
+    description = "Classifies emails into categories based on keywords."
 
-    CATEGORIES = {
+    CATEGORIES: ClassVar[Dict[str, List[str]]] = {
         "Application confirmation": [
             "thank you for applying",
             "application received",
@@ -45,7 +45,7 @@ class EmailClassifier(EmailProcessor):
         "Other": [],
     }
 
-    CONFIDENCE_THRESHOLD = 0.05
+    CONFIDENCE_THRESHOLD: ClassVar[float] = 0.05
 
     def classify_email(self, email: EmailData) -> Dict[str, Any]:
         """Classify an email and return category, confidence score, and matched keywords."""
@@ -90,7 +90,8 @@ class EmailClassifier(EmailProcessor):
         return category, confidence, matched_keywords
 
     def process(self, emails: List[EmailData]) -> Dict[str, Any]:
-        """Process a list of emails and classify them with confidence scores and matched keywords."""
+        """Process a list of emails and classify them with
+        confidence scores and matched keywords."""
         classifications = []
 
         for email in emails:
