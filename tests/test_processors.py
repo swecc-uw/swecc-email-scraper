@@ -126,12 +126,12 @@ def sample_classify_emails():
     well as one email for something that requires human review
     """
 
-    comfirmation_email = EmailMessage()
-    comfirmation_email.add_header("from", "recruiter@company.com")
-    comfirmation_email.add_header("to", "applicant@example.com")
-    comfirmation_email.add_header("subject", "Thank you for applying!")
-    comfirmation_email.add_header("date", format_datetime(datetime.now()))
-    comfirmation_email.set_content(
+    confirmation_email = EmailMessage()
+    confirmation_email.add_header("from", "recruiter@company.com")
+    confirmation_email.add_header("to", "applicant@example.com")
+    confirmation_email.add_header("subject", "Thank you for applying!")
+    confirmation_email.add_header("date", format_datetime(datetime.now()))
+    confirmation_email.set_content(
         "Please note that your application to company XYZ has been accepted."
     )
 
