@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Any
 import re
 from . import EmailProcessor, EmailData  
 
@@ -19,7 +19,7 @@ class EmailClassifier(EmailProcessor):
 
     CONFIDENCE_THRESHOLD = 0.05 
 
-    def classify_email(self, email: EmailData) -> Tuple[str, float, List[str]]:
+    def classify_email(self, email: EmailData) -> Dict[str, Any]:
         """Classify an email and return category, confidence score, and matched keywords."""
         scores = defaultdict(int)
         matched_keywords = []
