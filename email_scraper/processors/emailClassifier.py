@@ -1,7 +1,8 @@
-from collections import defaultdict
-from typing import Dict, List, Any
 import re
-from . import EmailProcessor, EmailData
+from collections import defaultdict
+from typing import Any, Dict, List
+
+from . import EmailData, EmailProcessor
 
 
 class EmailClassifier(EmailProcessor):
@@ -83,7 +84,7 @@ class EmailClassifier(EmailProcessor):
         except Exception as e:
             category = "Processing Error"
             confidence = 0.0
-            matched_keywords = [f"Error: {str(e)}"]
+            matched_keywords = [f"Error: {e!s}"]
             return category, confidence, matched_keywords
 
         return category, confidence, matched_keywords

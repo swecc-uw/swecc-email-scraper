@@ -9,9 +9,8 @@ from . import __version__
 from .formatters import FORMATTERS
 from .formatters.json import JsonFormatter
 from .processors import PROCESSORS, EmailData, Pipeline
-from .processors.example import ExampleProcessor
 from .processors.emailClassifier import EmailClassifier
-
+from .processors.example import ExampleProcessor
 
 # register built-in processors and formatters
 PROCESSORS["statistics"] = ExampleProcessor
