@@ -131,6 +131,7 @@ def list_formats() -> None:
     for name, formatter_cls in FORMATTERS.items():
         console.print(f"[green]{name}[/green]: {formatter_cls.description}")
 
+
 @main.command()
 def classify() -> None:
     """Classify emails read from stdin and output results to stdout.
@@ -159,7 +160,6 @@ def classify() -> None:
     except Exception as e:
         click.echo(f"Error processing emails: {e}", err=True)
         sys.exit(1)
-
 
 
 if __name__ == "__main__":
