@@ -179,7 +179,7 @@ def sample_classify_emails():
     )
 
     return [
-        EmailData.from_message(comfirmation_email),
+        EmailData.from_message(confirmation_email),
         EmailData.from_message(oa_email),
         EmailData.from_message(interview_email),
         EmailData.from_message(rejection_email),
