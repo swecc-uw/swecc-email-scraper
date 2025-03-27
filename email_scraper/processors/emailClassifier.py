@@ -9,8 +9,8 @@ class EmailClassifier(EmailProcessor):
     description = "Classifies emails into predefined categories based on keywords, with confidence scoring."
 
     CATEGORIES = {
-        "Application confirmation": ["thank you for applying", "application received", "we have received your application", "Thank you so much for taking the time to apply"],
-        "OA invitation": ["online assessment", "coding test", "HackerRank", "CodeSignal", "assessment link"],
+        "Application confirmation": ["thank you for applying", "application received", "we have received your application", "thank you so much for taking the time to apply"],
+        "OA invitation": ["online assessment", "coding test", "hackerrank", "codeSignal", "assessment link"],
         "Interview request": ["interview", "schedule a call", "speak with you", "chat about your application"],
         "Rejection": ["unfortunately", "we regret to inform you", "not moving forward", "consider other candidates", "decided not to move forward with your application"],
         "Offer": ["excited to offer", "we are pleased to offer", "congratulations", "job offer"],
@@ -25,15 +25,11 @@ class EmailClassifier(EmailProcessor):
         matched_keywords = []
 
         try:
-            content = f"{email.subject} {email.content}".lower()
-
-            # Debugprint output
-            # (content)            
+            content = f"{email.subject} {email.content}"
             for category, keywords in self.CATEGORIES.items():
                 for keyword in keywords:
-                    keyword = keyword.lower()
                     pattern = rf"{re.escape(keyword)}"
-                    if re.search(pattern, content):
+                    if re.search(pattern, content, re.IGNORECASE):
                         scores[category] += 1
                         matched_keywords.append(keyword)
             
@@ -65,16 +61,17 @@ class EmailClassifier(EmailProcessor):
     
     def process(self, emails: List[EmailData]) -> Dict[str, Any]:
         """Process a list of emails and classify them with confidence scores and matched keywords."""
-        results = {}
+        classifications = []
 
         for email in emails:
             category, confidence, matched_keywords = self.classify_email(email)
             
-            results[email.subject] = {
+            classifications.append({
+                "subject": email.subject,
                 "category": category,
                 "confidence": confidence,
                 "matched_keywords": matched_keywords
-            }
+            })
 
-        return results
+        return {"classifications": classifications}
 
