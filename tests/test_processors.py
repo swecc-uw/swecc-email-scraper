@@ -175,7 +175,7 @@ def sample_classify_emails():
     other_email.add_header("subject", "Job Offer at XYZ")
     other_email.add_header("date", format_datetime(datetime.now()))
     other_email.set_content(
-        "Dear Person\n\n After the previous interview, we were impressed but unfortunately we are unable to offer you a positon at company XYZ.  "
+        "Dear Person\n\n After the previous interview, we were impressed but unfortunately we are unable to offer you a position at company XYZ.  "
     )
 
     return [
