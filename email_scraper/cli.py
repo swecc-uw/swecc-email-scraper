@@ -9,10 +9,12 @@ from . import __version__
 from .formatters import FORMATTERS
 from .formatters.json import JsonFormatter
 from .processors import PROCESSORS, EmailData, Pipeline
+from .processors.classifier import EmailClassifier
 from .processors.example import ExampleProcessor
 
 # register built-in processors and formatters
 PROCESSORS["statistics"] = ExampleProcessor
+PROCESSORS["classifier"] = EmailClassifier
 FORMATTERS["json"] = JsonFormatter
 
 console = Console(stderr=True)  # use stderr for status messages
@@ -51,8 +53,7 @@ def read(mbox_path: str) -> None:
             }
             for e in emails
         ]
-
-        json.dump(email_dicts, sys.stdout)
+        json.dump(email_dicts, sys.stdout, ensure_ascii=False)
     except Exception as e:
         console.print(f"[red]Error reading mbox: {e}[/red]")
         raise click.Abort() from e
@@ -128,6 +129,36 @@ def list_formats() -> None:
     console.print("\n[bold]Available Output Formats:[/bold]\n")
     for name, formatter_cls in FORMATTERS.items():
         console.print(f"[green]{name}[/green]: {formatter_cls.description}")
+
+
+@main.command()
+def classify() -> None:
+    """Classify emails read from stdin and output results to stdout.
+
+    Reads JSON email data from stdin (piped from 'read' command),
+    classifies it using the email classifier, and outputs results as JSON to stdout.
+    """
+    try:
+        data = json.load(sys.stdin)
+
+        emails = [
+            EmailData(
+                sender=e["sender"],
+                subject=e["subject"],
+                date=e["date"],
+                content=e["content"],
+                headers=e["headers"],
+            )
+            for e in data
+        ]
+
+        classifier = EmailClassifier()
+        results = classifier.process(emails)
+        json.dump(results, sys.stdout, indent=4)
+        sys.stdout.write("\n")  # Ensure a newline is written
+    except Exception as e:
+        click.echo(f"Error processing emails: {e}", err=True)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
