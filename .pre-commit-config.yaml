@@ -34,7 +34,6 @@ repos:
   rev: v2.2.4
   hooks:
     - id: codespell
-      name: codespell-python
       entry: codespell
       language: system
       files: \.py$
