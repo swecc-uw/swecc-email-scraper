@@ -31,6 +31,11 @@ jobs:
         run: |
           black --check email_scraper
 
+      - name: Spell Check with codespell
+        run: |
+          pip install codespell
+          codespell --quiet-level=2
+
       - name: Lint with ruff
         run: |
           ruff check email_scraper
