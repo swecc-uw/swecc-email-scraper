@@ -29,3 +29,12 @@ repos:
         - --allow-subclassing-any
         - --disable-error-code=misc
         - --disable-error-code=no-untyped-def
+
+- repo: https://github.com/codespell-project/codespell
+  rev: v2.2.4
+  hooks:
+    - id: codespell
+      name: codespell-python
+      entry: codespell
+      language: system
+      files: \.py$

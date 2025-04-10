@@ -1,6 +1,6 @@
 import re
 from collections import defaultdict
-from typing import Any, ClassVar, Dict, List, Tuple
+from typing import Any, ClassVar, Dict, List
 
 from . import EmailData, EmailProcessor
 
