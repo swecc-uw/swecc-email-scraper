@@ -1,9 +1,13 @@
+import csv
+import io
 import json
+from typing import Any
 
+import click
 import pytest
 
 from email_scraper.formatters.json import JsonFormatter
-
+from email_scraper.formatters.csv import CsvFormatter
 
 @pytest.fixture
 def sample_results():
@@ -21,6 +25,14 @@ def sample_results():
         }
     }
 
+def flatten_dict(sample_results):
+    new_dict = {}
+    for key,value in sample_results.items():
+        if isinstance(value,dict) and value:
+            new_dict[key] = next(iter(value.values()))
+        else:
+            new_dict[key] = value
+    return new_dict
 
 def test_json_formatter(sample_results):
     """test json formatter output."""
@@ -42,3 +54,32 @@ def test_json_formatter_save(sample_results, tmp_path):
     with open(output_path) as f:
         saved_data = json.load(f)
     assert saved_data == sample_results
+
+def test_csv_formatter_unchecked(sample_results):
+    """test csv formatter(uncheked) output."""
+    formatter = CsvFormatter()
+    parsed = formatter.format(sample_results,unchecked = True)
+    col = list(sample_results.keys())
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=col) 
+    writer.writeheader()
+    writer.writerow(sample_results)
+    assert parsed == output.getvalue()
+
+def test_csv_formatter_checked_invalid(sample_results):
+    """test csv formatter(cheked) for nested input."""
+    formatter = CsvFormatter()
+    with pytest.raises(click.Abort):
+        formatter.format(sample_results,unchecked = False)
+
+def test_csv_formatter_checked_valid(sample_results):
+    """test csv formatter(cheked) for un-nested input."""
+    formatter = CsvFormatter()
+    flat_results = flatten_dict(sample_results)
+    parsed = formatter.format(flat_results,unchecked = True)
+    col = list(flat_results.keys())
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=col) 
+    writer.writeheader()
+    writer.writerow(flat_results)
+    assert parsed == output.getvalue()
